@@ -1,6 +1,6 @@
 # ⚓ Project R'lyeh (르리에)
 > **Real-Time Beat-Synced Acoustic Submarine Filter Pedal**  
-> 기타 연주의 리듬을 실시간으로 추적하여 마디(Bar) 단위로 주파수 심해를 유영하는 스마트 EDM 필터 페달
+> 기타 연주의 리듬을 실시간으로 추적하여 마디(Bar) 단위로 주파수 심해를 유영하는 EDM 필터 페달
 
 ---
 
