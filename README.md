@@ -56,7 +56,7 @@
 
 ## 🎛️ 4. 조종석 레이아웃 및 컨트롤 (4층 계층 구조)
 
-```text
+```
       ┌─────────────────────── 94mm ───────────────────────┐
       │         ┌────────────────────────────────┐         │
       │         │    SSD1309 OLED (57 x 29 mm)   │         │  ◀ 4층 (최상단): 2D 소나 레이더 & BPM 스캔
@@ -71,3 +71,71 @@
       │                        [ ⚓ ]                      │  ◀ 1층 (최하단): 원버튼 풋스위치 (토글/리셋)
       └────────────────────────────────────────────────────┘
         * 입출력 및 전원: 상단(또는 측면) 6.35mm INPUT x 1, OUTPUT x 1, DC 9V (Center Negative) x 1
+
+```
+
+### 속도 로터리 스위치 5단 매핑 (DOWN / UP 공통)
+
+* **1단 (`00`):** 즉시 실행 (Instant / 약 1초 내 스윕 완료)
+* **2단 (`04`):** 4마디 ($64\text{ blocks}$) 동안 스윕
+* **3단 (`08`):** 8마디 ($128\text{ blocks}$) 동안 스윕 (표준 빌드업)
+* **4단 (`16`):** 16마디 ($256\text{ blocks}$) 동안 스윕
+* **5단 (`32`):** 32마디 ($512\text{ blocks}$) 동안 스윕
+
+---
+
+## 🔌 5. 배선 및 핀맵 가이드 (Wiring & Pinout)
+
+*Teensy 4.0과 Audio Shield 결합 후 남는 디지털/아날로그 핀을 아래와 같이 할당합니다. (Audio Shield 전용 핀: `7, 8, 18, 19, 20, 21, 23`번 회피)*
+
+### 5.1 전원부 (9V Center Negative $\rightarrow$ 5V 변환)
+
+* 표준 9V DC 어댑터 전원을 DC-DC 스텝다운(Buck) 컨버터에 연결해 안정적인 `5V`로 강압한 뒤 Teensy `VIN` 핀에 공급합니다. *(주의: 9V를 Teensy에 직접 연결 시 보드가 즉시 파손됩니다.)*
+
+### 5.2 상단 소나 레이더 OLED (SSD1309 - 7핀 SPI 통신)
+
+*오디오 노이즈 유입 방지 및 60fps 레이더 애니메이션 구현을 위해 하드웨어 SPI를 사용합니다.*
+
+* `GND` $\rightarrow$ Teensy `GND`
+* `VCC` $\rightarrow$ Teensy `3.3V`
+* `SCL (D0 / SCK)` $\rightarrow$ Digital Pin `13` *(또는 대체 SPI SCK 핀)*
+* `SDA (D1 / MOSI)` $\rightarrow$ Digital Pin `11` *(Audio Shield와 SPI 버스 공유 시 CS 핀으로 구분)*
+* `RES (Reset)` $\rightarrow$ Digital Pin `9`
+* `DC (Data/Command)` $\rightarrow$ Digital Pin `10`
+* `CS (Chip Select)` $\rightarrow$ Digital Pin `5` *(기존 2번 풋스위치 자리에 할당)*
+
+### 5.3 명치 주파수 계기판 (TM1637 7-Segment)
+
+* `VCC` $\rightarrow$ Teensy `5V` (또는 `3.3V`)
+* `GND` $\rightarrow$ Teensy `GND`
+* `CLK` $\rightarrow$ Digital Pin `2`
+* `DIO` $\rightarrow$ Digital Pin `3`
+
+### 5.4 아날로그 노브 (B10K Potentiometers)
+
+* 양 끝 다리는 각각 `3.3V`와 `GND`에 공통 연결하고, 가운데(Wiper) 다리를 아래 핀에 연결합니다.
+* `VOLUME` $\rightarrow$ Analog Pin `A0` (Pin 14)
+* `RESO` $\rightarrow$ Analog Pin `A1` (Pin 15)
+* `DEPTH` $\rightarrow$ Analog Pin `A2` (Pin 16)
+
+### 5.5 스위치 및 로터리 (Digital Inputs - `INPUT_PULLUP` 사용)
+
+* 모든 스위치의 공통(Common) 단자는 `GND`에 연결합니다.
+* **원버튼 풋스위치 (토글/리셋):** Digital Pin `4`
+* **DOWN Speed 로터리 (5단):** Digital Pins `0, 1, 6, 12, 17`
+* **UP Speed 로터리 (5단):** Digital Pins `22, 24, 25, 26, 27`
+
+---
+
+## 🚀 6. 빌드 및 펌웨어 로드 순서 (Build Steps)
+
+1. **전원 및 오디오 쉴드 결합:** DC 9V $\rightarrow$ 5V 강압 컨버터 출력 전압을 멀티미터로 `5.0V` 확인 후 Teensy `VIN`에 연결하고, Teensy 4.0과 Audio Shield를 핀 헤더로 적층합니다.
+2. **만능기판 배선:** `3.3V` 및 `GND` 공통 레일을 구성하고, SPI 디스플레이와 아날로그 팟, 로터리 스위치를 핀맵에 맞춰 배선합니다.
+3. **케이스 타공 및 절연:** 1590BB 케이스 상판 도면에 맞춰 OLED 창, 7세그먼트 창, 노브/로터리/풋스위치 홀을 가공합니다. 디스플레이 기판 뒷면이 알루미늄 케이스 내벽과 닿아 쇼트 나지 않도록 캡톤 테이프나 절연 테이프로 마감합니다.
+4. **펌웨어 업로드:** Arduino IDE에서 `Teensyduino` 보드 패키지와 `U8g2` (SSD1309 제어용), `TM1637Display` 라이브러리를 설치한 뒤 소스코드를 컴파일하여 업로드합니다.
+
+---
+
+이제 하드웨어 스펙, 디스플레이 2종, 원버튼 토글/롱클릭 논리, 전원 보호 회로까지 깃허브에 바로 올려도 손색없는 완벽한 설계 청사진이 완성됐어, 마스터!
+
+```
