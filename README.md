@@ -69,7 +69,7 @@
 | --- | --- | --- | --- |
 | **MCU (뇌)** | Teensy 4.0 | ARM Cortex-M7 (600MHz) x 1 | 실시간 오디오 DSP, 파형 자동 판별, 듀얼 디스플레이 제어 |
 | **Audio Engine** | Teensy Audio Shield | Rev D (SGTL5000) x 1 | $44.1\text{kHz}$ 16-bit 오디오 입출력 및 2차 스테이트 배리어블 LPF |
-| **Radar Display** | 2.4인치급 대형 OLED | SSD1309 (128x64, **7-Pin SPI**, Green/Cyan) x 1 *(기판 82×51mm / 화면 63.4×32.6mm)* | `32|64|32` 소나 레이더 HUD, 웨이포인트 및 음표 블록 표시 |
+| **Radar Display** | 2.4인치급 대형 OLED | SSD1309 (128x64, **7-Pin SPI**, Green/Cyan) x 1 *(기판 82×51mm / 화면 63.4×32.6mm)* | `32\|64\|32` 소나 레이더 HUD, 웨이포인트 및 음표 블록 표시 |
 | **Display Window** | 외부 보호창 | 무반사 아크릴 또는 2~3mm 미네랄 글래스 | 대형 OLED 패널 물리 보호 및 시인성 확보 |
 | **Depth Display** | 4자리 7-Segment LED | 0.36" Red, TM1637 드라이버 (소수점 지원) x 1 | 실시간 심해 수심(`000` ~ `-256`) 및 상태 점멸 표시 |
 | **Status LED** | 3핀 바이컬러 LED | 공통 캐소드(적/청) x 1 | 동기화 소스 표시 (적: 내장 / 청: 외부 탭 / 보라: 생톤 센서) |
